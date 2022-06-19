@@ -130,7 +130,7 @@
       if (copy && copy[0]){
         const event = {
           event: copy[0].innerText,
-          premium: true,
+          premium: false,
           timestamp: new Date().getTime()
         }
         
