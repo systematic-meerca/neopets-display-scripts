@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name    Random Events Logger
+  // @name    Neopets Random Events Logger
 // @author     systematic-meerca
 // @match      *://www.neopets.com/*
 // @grant       GM.setValue
@@ -135,7 +135,7 @@
         }
         
         const events = await getEvents();        
-        events.push(event);
+        events.unshift(event);
         GM.setValue(STORAGE, JSON.stringify(events));
         
       }
@@ -149,7 +149,7 @@
           timestamp: new Date().getTime()
         }
         const events = await getEvents();        
-        events.push(event);
+        events.unshift(event);
         GM.setValue(STORAGE, JSON.stringify(events));
         
       }
