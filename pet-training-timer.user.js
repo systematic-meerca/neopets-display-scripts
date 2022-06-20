@@ -1,18 +1,12 @@
 // ==UserScript==
 // @name        Neopets Training Timer
-// @version     1.0
+// @version     1.1
 // @updateURL   https://raw.githubusercontent.com/systematic-meerca/neopets-display-scripts/main/pet-training-timer.user.js
 // @author      systematic-meerca
 // @match       *://www.neopets.com/*
 // @grant       GM.setValue
 // @grant       GM.getValue
 // ==/UserScript==
-/** Timers work, but I need to fix the following before posting about offiaial script release:
-* TODO -- 
-* 1. When training is "Complete", training report removes that pet as soon user hits status page. 
-*   Remove that pet when user clicks Complete button instead. If possible, let users complete training from popup?
-* 2. Show a status for pets awaiting payment..
-**/
 
 (async () => {
     const TYPES = { PIRATE: 'pirate', MYSTERY: 'mystery', NINJA: 'ninja' };
@@ -68,36 +62,55 @@
       return JSON.parse(await GM.getValue(STORAGE, '{}'));
     }
     const petData = await getPetData();
+    // Start pet status check / validation: 
     const updateTrainingData = (school) => {
         const timeCells = [];
         const xpr = document.evaluate(`//td[contains(text(), 'Time till course finishes : ')]`, document, null, 7, null);
         for (let i = 0; item = xpr.snapshotItem(i); i++) {
-            timeCells.push(item);
+            timeCells.push({cell: item, complete: false});
         }
-        petData[school] = timeCells.map(cell => {
-          const petname = cell.parentElement.firstChild.innerHTML.match(/neopets.com\/cpn\/(.+)\/1\/2.png/g)[0].split('/')[2];
-          const time = cell.innerText.match(/(\d+)/g);
-          const totalTime = (
-            Number.parseInt(time[0]) * 60 * 60 * 1000 //hours
-            + Number.parseInt(time[1]) * 60 * 1000 //min
-            + Number.parseInt(time[2]) * 1000 //sec
-          );
+        const completeXpr = document.evaluate(`//td[.//b[contains(text(),'Course Finished!')]]`, document, null, 7, null);
+        for (let i = 0; item = completeXpr.snapshotItem(i); i++) {
+            if (!item.classList.contains('content')) {
+                timeCells.push({cell: item, complete: true});
+            }
+        }
+        petData[school] = timeCells.map(({cell, complete}) => {
+            const petname = cell.parentElement.firstChild.innerHTML.match(/neopets.com\/cpn\/(.+)\/1\/2.png/g)[0].split('/')[2];
+            let totalTime = -1;
+            if (!complete) {
+                const time = cell.innerText.match(/(\d+)/g);
+                totalTime = (
+                    Number.parseInt(time[0]) * 60 * 60 * 1000 //hours
+                    + Number.parseInt(time[1]) * 60 * 1000 //min
+                    + Number.parseInt(time[2]) * 1000 //sec
+                );
+            }
 
-          return {
-            name: petname,
-            endTime: NOW + totalTime
-          }
+            return {
+                name: petname,
+                endTime: NOW + totalTime
+            }
 
         });
         GM.setValue(STORAGE, JSON.stringify(petData));
     }
+    
 
-
-    for (key in SCHOOL_DATA) {
-        if (location.href.includes(SCHOOL_DATA[key].link)) {
-            updateTrainingData(key);
-            break;
+    const processTraining = () => {
+        const congrats = document.evaluate(`//p[contains(text(), 'Congratulations! ')]`, document, null, 7, null).snapshotItem(0);
+        if (congrats) {
+            console.log("congr")
+            const petName = congrats.innerHTML.match(/<b>(.+)<\/b>/)[1];
+            for (key in SCHOOL_DATA) {
+                console.log("key", key)
+                if (petData[key]) {
+                    console.log("petdata ey", petData[key])
+                    petData[key] = petData[key].filter(pet => petName != pet.name);
+                }
+            }
         }
+        GM.setValue(STORAGE, JSON.stringify(petData));
     }
 
     const checkPetsInTraining = () => {
@@ -115,8 +128,22 @@
             }
         });
     }
+
+    for (key in SCHOOL_DATA) {
+        if (location.href.includes(SCHOOL_DATA[key].link)) {
+            updateTrainingData(key);
+            break;
+        }
+    }
+
+    if (location.href.includes("/process_training.phtml")) {
+        processTraining();
+    }
     checkPetsInTraining();
 
+
+
+    // Start display-related functions: 
     const getTrainingIcon = () => {
         if (PROPS.trainingComplete) {
             if (TRAINING_COMPLETE_ICON) {
