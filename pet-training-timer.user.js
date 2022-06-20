@@ -7,6 +7,12 @@
 // @grant       GM.setValue
 // @grant       GM.getValue
 // ==/UserScript==
+/** Timers work, but I need to fix the following before posting about offiaial script release:
+* TODO -- 
+* 1. When training is "Complete", training report removes that pet as soon user hits status page. 
+*   Remove that pet when user clicks Complete button instead. If possible, let users complete training from popup?
+* 2. Show a status for pets awaiting payment..
+**/
 
 (async () => {
     const TYPES = { PIRATE: 'pirate', MYSTERY: 'mystery', NINJA: 'ninja' };
@@ -68,24 +74,22 @@
         for (let i = 0; item = xpr.snapshotItem(i); i++) {
             timeCells.push(item);
         }
-        if (timeCells && timeCells.length) {
-            petData[school] = timeCells.map(cell => {
-                const petname = cell.parentElement.firstChild.innerHTML.match(/neopets.com\/cpn\/(.+)\/1\/2.png/g)[0].split('/')[2];
-                const time = cell.innerText.match(/(\d+)/g);
-                const totalTime = (
-                    Number.parseInt(time[0]) * 60 * 60 * 1000 //hours
-                    + Number.parseInt(time[1]) * 60 * 1000 //min
-                    + Number.parseInt(time[2]) * 1000 //sec
-                );
+        petData[school] = timeCells.map(cell => {
+          const petname = cell.parentElement.firstChild.innerHTML.match(/neopets.com\/cpn\/(.+)\/1\/2.png/g)[0].split('/')[2];
+          const time = cell.innerText.match(/(\d+)/g);
+          const totalTime = (
+            Number.parseInt(time[0]) * 60 * 60 * 1000 //hours
+            + Number.parseInt(time[1]) * 60 * 1000 //min
+            + Number.parseInt(time[2]) * 1000 //sec
+          );
 
-                return {
-                    name: petname,
-                    endTime: NOW + totalTime
-                }
+          return {
+            name: petname,
+            endTime: NOW + totalTime
+          }
 
-            });
-            GM.setValue(STORAGE, JSON.stringify(petData));
-        }
+        });
+        GM.setValue(STORAGE, JSON.stringify(petData));
     }
 
 
@@ -235,9 +239,9 @@ const setDisplayIcon = async ()=> {
                 return `
               <div class="trainingTimerPets">
                 <div class="trainingTimerPets-detail">
-                    <img src="//pets.neopets.com/cpn/${pet.name}/1/1.png">
-                    <b>${pet.name}</b> 
-                </div> 
+										<img src="//pets.neopets.com/cpn/${pet.name}/1/1.png">
+										<b>${pet.name}</b> 
+								</div> 
                 <div class="trainingTimerPets-time"> 
                 ${timeLeft > 0 ?
                     `${Math.floor(hr)}hrs, ${Math.floor(min)}mins (${displayTime})` : `<b>Complete!</b>`}
@@ -250,7 +254,7 @@ const setDisplayIcon = async ()=> {
       `;
     }).join(' ')}
       </div>
-        <div id="trainingTimersToggleContainer"> 
+			<div id="trainingTimersToggleContainer"> 
             <img
             id="trainingTimersToggleIcon"
             class="trainingIcon  ${PROPS.completeTrainingLocation.length ? 'complete' : ''} pointer"
