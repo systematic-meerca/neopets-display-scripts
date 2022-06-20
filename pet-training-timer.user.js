@@ -18,8 +18,8 @@
         TYPES.NINJA // Secret Ninja Academy
     ];
 
-    // If you want links to automatically open in a new tab
-    const OPEN_LINKS_IN_NEW_TAB = true;
+    // If you want links to open in a new tab instead of current 
+    const CLICKED_LINKS_TO_NEW_TAB = true;
 
     // Replace the URLs below with your favorite item or images if you'd like.
     //  NONE_TRAINING_ICON - will appear when no pets are in training
@@ -66,31 +66,33 @@
         for (let i = 0; item = xpr.snapshotItem(i); i++) {
             timeCells.push(item);
         }
-        petData[school] = timeCells.map(cell => {
-            const petname = cell.parentElement.firstChild.innerHTML.match(/neopets.com\/cpn\/(.+)\/1\/2.png/g)[0].split('/')[2];
-            const time = cell.innerText.match(/(\d+)/g);
-            const totalTime = (
-                Number.parseInt(time[0]) * 60 * 60 * 1000 //hours
-                + Number.parseInt(time[1]) * 60 * 1000 //min
-                + Number.parseInt(time[2]) * 1000 //sec
-            );
+        if (timeCells && timeCells.length) {
+            petData[school] = timeCells.map(cell => {
+                const petname = cell.parentElement.firstChild.innerHTML.match(/neopets.com\/cpn\/(.+)\/1\/2.png/g)[0].split('/')[2];
+                const time = cell.innerText.match(/(\d+)/g);
+                const totalTime = (
+                    Number.parseInt(time[0]) * 60 * 60 * 1000 //hours
+                    + Number.parseInt(time[1]) * 60 * 1000 //min
+                    + Number.parseInt(time[2]) * 1000 //sec
+                );
 
-            return {
-                name: petname,
-                endTime: NOW + totalTime
-            }
+                return {
+                    name: petname,
+                    endTime: NOW + totalTime
+                }
 
-        });
-        GM.setValue(STORAGE, JSON.stringify(petData));
+            });
+            GM.setValue(STORAGE, JSON.stringify(petData));
+        }
     }
 
     if (location.href.indexOf("academy.phtml?type=status") != -1) {
         updateTrainingData(TYPES.PIRATE);
     }
-    if (location.href.indexOf("training.phtml?type=status") != -1) {
+    if (location.href.indexOf("island/training.phtml?type=status") != -1) {
         updateTrainingData(TYPES.MYSTERY);
     }
-    if (location.href.indexOf("fight_training.phtml?type=status") != -1) {
+    if (location.href.indexOf("/fight_training.phtml?type=status") != -1) {
         updateTrainingData(TYPES.NINJA);
     }
 
@@ -220,7 +222,7 @@
             <div class="sidebarHeader 
               ${PROPS.completeTrainingLocation.indexOf(s) !== -1 ? 'trainingCompleteHeader' : ''}">
               <a href="${schoolData.link}"
-              ${OPEN_LINKS_IN_NEW_TAB ? 'target="_blank"' : ''}>
+              ${CLICKED_LINKS_TO_NEW_TAB ? 'target="_blank"' : ''}>
                 <b>${schoolData.name}</b>
                 </a>
             </div>
