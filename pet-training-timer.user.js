@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Neopets Training Timer
-// @version     1.0-beta
+// @version     1.0
 // @updateURL   https://raw.githubusercontent.com/systematic-meerca/neopets-display-scripts/main/pet-training-timer.user.js
 // @author      systematic-meerca
 // @match       *://www.neopets.com/*
@@ -86,13 +86,13 @@
         }
     }
 
-    if (location.href.indexOf("academy.phtml?type=status") != -1) {
+    if (location.href.includes("/academy.phtml?type=status")) {
         updateTrainingData(TYPES.PIRATE);
     }
-    if (location.href.indexOf("island/training.phtml?type=status") != -1) {
+    if (location.href.includes("/training.phtml?type=status")) {
         updateTrainingData(TYPES.MYSTERY);
     }
-    if (location.href.indexOf("/fight_training.phtml?type=status") != -1) {
+    if (location.href.includes("/fight_training.phtml?type=status")) {
         updateTrainingData(TYPES.NINJA);
     }
 
@@ -100,16 +100,12 @@
         PROPS.completeTrainingLocation = [];
         const types = Object.values(TYPES);
         types.forEach(school => {
-            console.log(school);
             if (petData[school] && petData[school].length) {
                 petData[school].forEach(pet => {
                     PROPS.petsInTraining = true;
                     if (pet.endTime <= NOW) {
-                        console.log("Pet done");
                         PROPS.trainingComplete = true;
                         PROPS.completeTrainingLocation.push(school);
-                    } else {
-                        console.log("Pet not done");
                     }
                 });
             }
@@ -227,7 +223,6 @@
                 </a>
             </div>
             ${petData && petData[s] && petData[s].length ? petData[s].map(pet => {
-                console.log(pet);
                 const timeLeft = pet.endTime - NOW;
                 let hr, min, displayTime;
                 if (timeLeft > 0) {
