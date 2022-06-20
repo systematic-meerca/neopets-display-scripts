@@ -235,9 +235,9 @@ const setDisplayIcon = async ()=> {
                 return `
               <div class="trainingTimerPets">
                 <div class="trainingTimerPets-detail">
-										<img src="//pets.neopets.com/cpn/${pet.name}/1/1.png">
-										<b>${pet.name}</b> 
-								</div> 
+                    <img src="//pets.neopets.com/cpn/${pet.name}/1/1.png">
+                    <b>${pet.name}</b> 
+                </div> 
                 <div class="trainingTimerPets-time"> 
                 ${timeLeft > 0 ?
                     `${Math.floor(hr)}hrs, ${Math.floor(min)}mins (${displayTime})` : `<b>Complete!</b>`}
@@ -250,7 +250,7 @@ const setDisplayIcon = async ()=> {
       `;
     }).join(' ')}
       </div>
-			<div id="trainingTimersToggleContainer"> 
+        <div id="trainingTimersToggleContainer"> 
             <img
             id="trainingTimersToggleIcon"
             class="trainingIcon  ${PROPS.completeTrainingLocation.length ? 'complete' : ''} pointer"
@@ -275,7 +275,7 @@ await setDisplayIcon();
 setInterval(async ()=>{
    const container = document.getElementById("trainingTimerElementContainer");
     if (container) {
-        document.removeChild(container);
+        container.parentNode.removeChild(container);
     }
     await setDisplayIcon();
 }, 60 * 1000);
