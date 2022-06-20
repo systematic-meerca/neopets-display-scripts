@@ -86,14 +86,12 @@
         }
     }
 
-    if (location.href.includes("/academy.phtml?type=status")) {
-        updateTrainingData(TYPES.PIRATE);
-    }
-    if (location.href.includes("/training.phtml?type=status")) {
-        updateTrainingData(TYPES.MYSTERY);
-    }
-    if (location.href.includes("/fight_training.phtml?type=status")) {
-        updateTrainingData(TYPES.NINJA);
+
+    for (key in SCHOOL_DATA) {
+        if (location.href.includes(SCHOOL_DATA[key].link)) {
+            updateTrainingData(key);
+            break;
+        }
     }
 
     const checkPetsInTraining = () => {
