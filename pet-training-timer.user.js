@@ -58,8 +58,10 @@
         completeTrainingLocation: [],
         petsInTraining: false
     };
-    const petData = JSON.parse(await GM.getValue(STORAGE, '{}'));
-
+    const getPetData = async () => {
+      return JSON.parse(await GM.getValue(STORAGE, '{}'));
+    }
+    const petData = await getPetData();
     const updateTrainingData = (school) => {
         const timeCells = [];
         const xpr = document.evaluate(`//td[contains(text(), 'Time till course finishes : ')]`, document, null, 7, null);
@@ -127,6 +129,8 @@
         return NONE_TRAINING_ICON;
     };
 
+const setDisplayIcon = async ()=> {
+    const petData = await getPetData();
     const element = `
   <style>
     #trainingTimers {
@@ -255,6 +259,7 @@
   </div>
   `;
     const trainingTimer = document.createElement('div');
+    trainingTimer.id = "trainingTimerElementContainer";
     trainingTimer.innerHTML = element;
     const parentEl = document.getElementById("content") || document.getElementsByTagName("body")[0]
     parentEl.append(trainingTimer);
@@ -264,6 +269,15 @@
         const report = document.getElementById("trainingTimersReport");
         report.classList.toggle("trainingTimesHiddenItem");
     });
+};
 
+await setDisplayIcon();
+setInterval(async ()=>{
+   const container = document.getElementById("trainingTimerElementContainer");
+    if (container) {
+        document.removeChild(container);
+    }
+    await setDisplayIcon();
+}, 60 * 1000);
 
 })().then();
