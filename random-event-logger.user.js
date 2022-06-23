@@ -49,6 +49,9 @@
 .reEventPremium {
 	border-color:gold;
 }
+.reEventFaerieQuest {
+	border-color:blue;
+}
 .confirmClearBox {
 	display: flex;
 	justify-content: space-evenly;
@@ -125,8 +128,9 @@
 }
   
   const checkForEvent = async () => {
+     const events = await getEvents(); 
     // Regular Events: 
-    const re = document.getElementsByClassName("randomEvent");
+    let re = document.getElementsByClassName("randomEvent");
     if(re && re[0]) {
       const copy = re[0].getElementsByClassName("copy");
       if (copy && copy[0]){
@@ -135,11 +139,8 @@
           premium: false,
           timestamp: new Date().getTime()
         }
-        
-        const events = await getEvents();        
         events.unshift(event);
         GM.setValue(STORAGE, JSON.stringify(events));
-        
       }
     }
     // Premium Events: 
@@ -150,11 +151,24 @@
           premium: true,
           timestamp: new Date().getTime()
         }
-        const events = await getEvents();        
         events.unshift(event);
         GM.setValue(STORAGE, JSON.stringify(events));
-        
       }
+
+    re = document.getElementsByClassName("pushdown");
+    if(re && re[0]) {
+      const copy = re[0].getElementsByClassName("inner_wrapper2");
+      if (copy && copy[0]){
+        const event = {
+          event: copy[0].innerText,
+          premium: false,
+          fq: true,
+          timestamp: new Date().getTime()
+        }
+        events.unshift(event);
+        GM.setValue(STORAGE, JSON.stringify(events));
+      }
+    }
     }
   
 
@@ -219,6 +233,7 @@ ${STYLE}
 							${i%2!=0 ? 'alt' : ''} 
 							${i+1!= array.length  ? 'notLast' : ''}
 							${e.premium ? 'reEventPremium' : ''}
+							${e.fq ? 'reEventFaerieQuest' : ''}
 						"> 
 							<div id="recentEventLogClipped-${i}" class="pointer">
 								${clipEventText(e.event)} 
