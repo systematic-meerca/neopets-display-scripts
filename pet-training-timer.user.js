@@ -18,8 +18,13 @@
         TYPES.NINJA // Secret Ninja Academy
     ];
 
-    // If you want links to open in a new tab instead of current 
+    // If you want links to open in a new tab instead of current
     const CLICKED_LINKS_TO_NEW_TAB = true;
+  
+  	// PERSIST_OPEN_STATE: If you open/close the details on one page, it'll remember on the next page. 
+    // If persist_open_state is true, the tool will remember if you opened the details panel when you change pages.
+    // If persist_open_state is false, the details panel will be always be closed when a new page loads
+  	const PERSIST_OPEN_STATE = false;
 
     // Replace the URLs below with your favorite item or images if you'd like.
     //  NONE_TRAINING_ICON - will appear when no pets are in training
@@ -296,10 +301,20 @@ const setDisplayIcon = async ()=> {
     parentEl.append(trainingTimer);
 
     const toggle = document.getElementById("trainingTimersToggleIcon");
-    toggle && toggle.addEventListener('click', () => {
+  
+  	const openDetails = (e, n, dontSave) => {
         const report = document.getElementById("trainingTimersReport");
         report.classList.toggle("trainingTimesHiddenItem");
-    });
+        if (PERSIST_OPEN_STATE && !dontSave && petData) {
+            petData.detailsOpened = !petData.detailsOpened;
+            GM.setValue(STORAGE, JSON.stringify(petData));
+        }
+    }
+    toggle && toggle.addEventListener('click', openDetails);
+    
+    if (PERSIST_OPEN_STATE && petData && petData.detailsOpened) {
+      openDetails(null, null, true);
+    }
 };
 
 await setDisplayIcon();
