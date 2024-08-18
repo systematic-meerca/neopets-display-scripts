@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Neopets Training Timer
-// @version     1.1
+// @version     1.2
 // @updateURL   https://raw.githubusercontent.com/systematic-meerca/neopets-display-scripts/main/pet-training-timer.user.js
 // @author      systematic-meerca
 // @match       *://www.neopets.com/*
@@ -85,7 +85,7 @@
             let totalTime = -1;
             if (!complete) {
                 const time = cell.innerText.match(/(\d+)/g);
-                let cookie = 0;
+                let cookie = 0; 
                 if (cell.innerHTML.includes("strikethrough")) cookie = 3;
                 totalTime = (
                     Number.parseInt(time[0+cookie]) * 60 * 60 * 1000 //hours

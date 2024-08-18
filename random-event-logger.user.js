@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Neopets Random Events Logger
-// @version     1.0.2
+// @version     1.0.3
 // @updateURL   https://raw.githubusercontent.com/systematic-meerca/neopets-display-scripts/main/random-event-logger.user.js
 // @author      systematic-meerca
 // @match       *://www.neopets.com/*
@@ -249,7 +249,7 @@ ${STYLE}
             : ""}
 				<div class="reLoggerJustifyBetween"> 
 					<div><b>Count today </b></div>
-        	<div> ${events.filter(e => e.timestamp > (now - 1000 * 60 * 60 * 24)).length} </div>
+          <div> ${events.filter(e => e.timestamp > new Date().setHours(0,0,0,0)).length} </div>
         </div>
         <div class="reLoggerJustifyBetween"> 
 					<div><b>Total logged</b></div>
