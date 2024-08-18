@@ -85,10 +85,12 @@
             let totalTime = -1;
             if (!complete) {
                 const time = cell.innerText.match(/(\d+)/g);
+                let cookie = 0;
+                if (cell.innerHTML.includes("strikethrough")) cookie = 3;
                 totalTime = (
-                    Number.parseInt(time[0]) * 60 * 60 * 1000 //hours
-                    + Number.parseInt(time[1]) * 60 * 1000 //min
-                    + Number.parseInt(time[2]) * 1000 //sec
+                    Number.parseInt(time[0+cookie]) * 60 * 60 * 1000 //hours
+                    + Number.parseInt(time[1+cookie]) * 60 * 1000 //min
+                    + Number.parseInt(time[2+cookie]) * 1000 //sec
                 );
             }
 
