@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Neopets Random Events Logger
-// @version     1.0.3
+// @version     1.0.4
 // @updateURL   https://raw.githubusercontent.com/systematic-meerca/neopets-display-scripts/main/random-event-logger.user.js
 // @author      systematic-meerca
 // @match       *://www.neopets.com/*
@@ -9,8 +9,14 @@
 // ==/UserScript==
 
 (async () => {
+/** ======== v CUSTOMIZATION OPTIONS BELOW v ============**/
   /** Change NUMBER_RECENT_EVENTS if you'd like to see MORE past events. **/
   const NUMBER_RECENT_EVENTS = 5;
+  /** Set LOG_SINCE_MIDNIGHT=true if you only want to see events only since midnight.
+   * Set LOG_SINCE_MIDNIGHT=false if you want to see all events in the past 24 hours. */
+  const LOG_SINCE_MIDNIGHT = true;
+/** ======== ^ CUSTOMIZATION OPTIONS ABOVE ^ ============ **/
+
   const SETTINGS_STORAGE = 'showContent';
   const STORAGE = "randomevents";
   
@@ -249,7 +255,9 @@ ${STYLE}
             : ""}
 				<div class="reLoggerJustifyBetween"> 
 					<div><b>Count today </b></div>
-          <div> ${events.filter(e => e.timestamp > new Date().setHours(0,0,0,0)).length} </div>
+          <div> ${events.filter(e => e.timestamp > ( 
+            LOG_SINCE_MIDNIGHT ? new Date().setHours(0,0,0,0) : (now - 1000 * 60 * 60 * 24)
+          )).length} </div>
         </div>
         <div class="reLoggerJustifyBetween"> 
 					<div><b>Total logged</b></div>
