@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name        Neopets Training Timer
-// @version     1.1
+// @version     1.2
 // @updateURL   https://raw.githubusercontent.com/systematic-meerca/neopets-display-scripts/main/pet-training-timer.user.js
 // @author      systematic-meerca
 // @match       *://www.neopets.com/*
 // @grant       GM.setValue
 // @grant       GM.getValue
+// @noframes
 // ==/UserScript==
 
 (async () => {
@@ -107,7 +108,6 @@
     const processTraining = () => {
         const congrats = document.evaluate(`//p[contains(text(), 'Congratulations! ')]`, document, null, 7, null).snapshotItem(0);
         if (congrats) {
-            console.log("congr")
             const petName = congrats.innerHTML.match(/<b>(.+)<\/b>/)[1];
             for (key in SCHOOL_DATA) {
                 console.log("key", key)
