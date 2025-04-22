@@ -6,6 +6,7 @@
 // @match       *://www.neopets.com/*
 // @grant       GM.setValue
 // @grant       GM.getValue
+// @noframes
 // ==/UserScript==
 
 (async () => {
@@ -107,7 +108,6 @@
     const processTraining = () => {
         const congrats = document.evaluate(`//p[contains(text(), 'Congratulations! ')]`, document, null, 7, null).snapshotItem(0);
         if (congrats) {
-            console.log("congr")
             const petName = congrats.innerHTML.match(/<b>(.+)<\/b>/)[1];
             for (key in SCHOOL_DATA) {
                 console.log("key", key)
